@@ -1,0 +1,10 @@
+# Runtime dependencies for hosting (e.g. Streamlit Community Cloud), pinned to the
+# versions the test suite ran against on Python 3.13. Development tools (pytest,
+# ruff, mypy, playwright) are in requirements-lock.txt.
+numpy==2.5.4
+pandas==3.0.6
+plotly==7.1.0
+pydantic==2.14.1
+python-dotenv==1.2.4
+requests==2.34.2
+streamlit==1.66.0

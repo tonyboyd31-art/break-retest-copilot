@@ -1,0 +1,97 @@
+{
+  "firm_code": "topstep",
+  "firm_name": "Topstep",
+  "website": "https://www.topstep.com",
+  "config_version": "2026-10-16",
+  "verification_summary": "No value in this file is VERIFIED. The official help-center pages (help.topstep.com) and topstep.com could not be fetched from the build environment (network policy). Values marked UNVERIFIED or CONFLICTING were taken from web-search summaries of the official pages on 2026-10-16. Confirm every rule on the official page for YOUR exact account type, then record it as USER_CONFIRMED in Firm & Account Manager. null means the value was not found and must be entered manually.",
+  "retrieval": "web_search_summary 2026-10-16 (official page not fetched)",
+  "firm_rules": {
+    "trading_close_time": {"value": "15:10 America/Chicago", "status": "UNVERIFIED", "source_url": "https://help.topstep.com/en/articles/8284206-when-and-what-products-can-i-trade", "notes": "All positions must be closed by 3:10 PM CT; do not open new positions after 3:08 PM CT when risk managers begin flattening. Trading resumes 5:00 PM CT."},
+    "overnight_positions": {"value": false, "status": "UNVERIFIED", "source_url": "https://help.topstep.com/en/articles/8284206-when-and-what-products-can-i-trade", "notes": "Implied by the mandatory daily close-out."},
+    "automation_policy": {"value": "Custom automated strategies are permitted via the TopstepX/ProjectX API in Combine and Express accounts, subject to platform rules and the HFT prohibition; not available on Live. VPS, VPNs and remote servers are prohibited by the Terms of Use. Rule violations are treated the same whether manual or automated.", "status": "UNVERIFIED", "source_url": "https://help.topstep.com/en/articles/11187768-topstepx-api-access", "notes": "This application places no orders and uses no Topstep API."},
+    "prohibited_strategies": {"value": "Software/AI giving an unfair advantage, ultra-high-speed systems, orders outside best bid/offer, exploiting unrealistic simulator fills, rapid trades to gain SIM queue position, account stacking. Topstep reserves discretion to determine prohibited conduct.", "status": "UNVERIFIED", "source_url": "https://help.topstep.com/en/articles/10305426-prohibited-trading-strategies-at-topstep", "notes": "See also https://help.topstep.com/en/articles/10296582-prohibited-conduct"}
+  },
+  "account_types": [
+    {
+      "code": "topstep_tc_50k", "label": "Trading Combine 50K", "stage": "evaluation", "account_size": 50000,
+      "rules": {
+        "starting_balance": {"value": 50000, "unit": "USD", "status": "UNVERIFIED", "source_url": "https://help.topstep.com/en/articles/8284204-what-is-the-maximum-loss-limit", "notes": "The Combine starts at the full account size."},
+        "profit_target": {"value": 3000, "unit": "USD", "status": "UNVERIFIED", "source_url": "https://help.topstep.com/en/articles/8284197-trading-combine-parameters"},
+        "max_loss": {"value": 2000, "unit": "USD", "status": "UNVERIFIED", "source_url": "https://help.topstep.com/en/articles/8284204-what-is-the-maximum-loss-limit", "notes": "Maximum Loss Limit starts $2,000 below the balance and rises with end-of-day balance highs; never moves down."},
+        "drawdown_model": {"value": {"type": "eod_trailing", "lock_floor_offset": null, "lock_on_payout": false, "breach_basis": "intraday_equity"}, "status": "UNVERIFIED", "source_url": "https://help.topstep.com/en/articles/8284204-what-is-the-maximum-loss-limit", "notes": "MLL updates at end of day but is monitored in real time including unrealized P&L. Whether/where it stops trailing was NOT stated in the retrieved summary, so no lock is applied (conservative: higher floor). Set lock_floor_offset after confirming."},
+        "daily_loss_limit": {"value": {"amount": null, "type": "optional_or_automatic"}, "status": "CONFLICTING", "source_url": "https://help.topstep.com/en/articles/10490293-daily-loss-limit-in-the-trading-combine-and-express-funded-account", "notes": "One article says the DLL is optional (set at purchase); the Responsible Trading Program page says new Combines automatically get a DLL. The 50K amount was not stated in the retrieved summary."},
+        "max_contracts_minis": {"value": 5, "status": "UNVERIFIED", "source_url": "https://help.topstep.com/en/articles/8284197-trading-combine-parameters"},
+        "max_contracts_micros": {"value": 50, "status": "UNVERIFIED", "source_url": "https://help.topstep.com/en/articles/8284197-trading-combine-parameters", "notes": "Micros count 10:1."},
+        "consistency": {"value": {"formula": "largest_day_over_total_profit", "threshold": 0.55}, "status": "CONFLICTING", "source_url": "https://help.topstep.com/en/articles/8284197-trading-combine-parameters", "notes": "Summaries describe a '55% Consistency Target' and say the best day should stay below 55% of the Profit Target to avoid increasing the Consistency Target; one sales page mentions 40%. The formula used here (largest day / total net profit <= 55%) is an interpretation - confirm."},
+        "min_trading_days": {"value": 2, "status": "UNVERIFIED", "source_url": "https://help.topstep.com/en/articles/8284197-trading-combine-parameters", "notes": "Help center: can pass in as few as two days."}
+      }
+    },
+    {
+      "code": "topstep_tc_100k", "label": "Trading Combine 100K", "stage": "evaluation", "account_size": 100000,
+      "rules": {
+        "starting_balance": {"value": 100000, "unit": "USD", "status": "UNVERIFIED", "source_url": "https://help.topstep.com/en/articles/8284204-what-is-the-maximum-loss-limit"},
+        "profit_target": {"value": 6000, "unit": "USD", "status": "UNVERIFIED", "source_url": "https://www.topstep.com/topstep-prop"},
+        "max_loss": {"value": 3000, "unit": "USD", "status": "UNVERIFIED", "source_url": "https://help.topstep.com/en/articles/8284204-what-is-the-maximum-loss-limit"},
+        "drawdown_model": {"value": {"type": "eod_trailing", "lock_floor_offset": null, "lock_on_payout": false, "breach_basis": "intraday_equity"}, "status": "UNVERIFIED", "source_url": "https://help.topstep.com/en/articles/8284204-what-is-the-maximum-loss-limit", "notes": "Lock level not confirmed; no lock applied."},
+        "daily_loss_limit": {"value": {"amount": 2000, "type": "optional_or_automatic"}, "status": "CONFLICTING", "source_url": "https://help.topstep.com/en/articles/10490293-daily-loss-limit-in-the-trading-combine-and-express-funded-account", "notes": "Optional vs automatic conflict between Topstep pages."},
+        "max_contracts_minis": {"value": 10, "status": "UNVERIFIED", "source_url": "https://help.topstep.com/en/articles/8284197-trading-combine-parameters"},
+        "max_contracts_micros": {"value": 100, "status": "UNVERIFIED", "source_url": "https://help.topstep.com/en/articles/8284197-trading-combine-parameters"},
+        "consistency": {"value": {"formula": "largest_day_over_total_profit", "threshold": 0.55}, "status": "CONFLICTING", "source_url": "https://help.topstep.com/en/articles/8284197-trading-combine-parameters", "notes": "See 50K note."},
+        "min_trading_days": {"value": 2, "status": "UNVERIFIED", "source_url": "https://help.topstep.com/en/articles/8284197-trading-combine-parameters"}
+      }
+    },
+    {
+      "code": "topstep_tc_150k", "label": "Trading Combine 150K", "stage": "evaluation", "account_size": 150000,
+      "rules": {
+        "starting_balance": {"value": 150000, "unit": "USD", "status": "UNVERIFIED", "source_url": "https://help.topstep.com/en/articles/8284204-what-is-the-maximum-loss-limit"},
+        "profit_target": {"value": 9000, "unit": "USD", "status": "UNVERIFIED", "source_url": "https://www.topstep.com/topstep-prop"},
+        "max_loss": {"value": 4500, "unit": "USD", "status": "UNVERIFIED", "source_url": "https://help.topstep.com/en/articles/8284204-what-is-the-maximum-loss-limit"},
+        "drawdown_model": {"value": {"type": "eod_trailing", "lock_floor_offset": null, "lock_on_payout": false, "breach_basis": "intraday_equity"}, "status": "UNVERIFIED", "source_url": "https://help.topstep.com/en/articles/8284204-what-is-the-maximum-loss-limit", "notes": "Lock level not confirmed; no lock applied."},
+        "daily_loss_limit": {"value": {"amount": 3000, "type": "optional_or_automatic"}, "status": "CONFLICTING", "source_url": "https://help.topstep.com/en/articles/10490293-daily-loss-limit-in-the-trading-combine-and-express-funded-account"},
+        "max_contracts_minis": {"value": 15, "status": "UNVERIFIED", "source_url": "https://help.topstep.com/en/articles/8284197-trading-combine-parameters"},
+        "max_contracts_micros": {"value": 150, "status": "UNVERIFIED", "source_url": "https://help.topstep.com/en/articles/8284197-trading-combine-parameters"},
+        "consistency": {"value": {"formula": "largest_day_over_total_profit", "threshold": 0.55}, "status": "CONFLICTING", "source_url": "https://help.topstep.com/en/articles/8284197-trading-combine-parameters", "notes": "See 50K note."},
+        "min_trading_days": {"value": 2, "status": "UNVERIFIED", "source_url": "https://help.topstep.com/en/articles/8284197-trading-combine-parameters"}
+      }
+    },
+    {
+      "code": "topstep_xfa_50k", "label": "Express Funded Account 50K", "stage": "funded", "account_size": 50000,
+      "rules": {
+        "starting_balance": {"value": null, "unit": "USD", "status": "UNVERIFIED", "source_url": "https://help.topstep.com/en/articles/8284215-express-funded-account-parameters", "notes": "Not found in retrieved summaries - enter the starting balance shown in your Topstep dashboard."},
+        "max_loss": {"value": null, "unit": "USD", "status": "UNVERIFIED", "source_url": "https://help.topstep.com/en/articles/8284215-express-funded-account-parameters", "notes": "XFA MLL amount not found in retrieved summaries - enter manually."},
+        "drawdown_model": {"value": {"type": "eod_trailing", "lock_floor_offset": 0, "lock_on_payout": true, "breach_basis": "intraday_equity"}, "status": "UNVERIFIED", "source_url": "https://help.topstep.com/en/articles/8284233-topstep-payout-policy", "notes": "Summary: after each payout the Maximum Loss Limit resets to $0 permanently (modelled as the floor locking at the starting balance when a payout is recorded)."},
+        "scaling_plan": {"value": null, "status": "UNVERIFIED", "source_url": "https://help.topstep.com/en/articles/8284215-express-funded-account-parameters", "notes": "Contract limit follows the Scaling Plan based on balance; tier table not retrieved - enter your current limit manually."},
+        "payout_paths": {"value": [
+          {"name": "Standard", "winning_days_required": 5, "winning_day_threshold": 150, "require_positive_cycle_profit": true, "cap": {"pct": 0.5, "basis": "balance_above_start", "max_amount": 5000}},
+          {"name": "Consistency", "min_trading_days": 3, "consistency_threshold": 0.4, "require_positive_cycle_profit": true, "cap": {"pct": 0.5, "basis": "balance_above_start", "max_amount": 6000}}
+        ], "status": "UNVERIFIED", "source_url": "https://help.topstep.com/en/articles/8284233-topstep-payout-policy", "notes": "Standard: 5 non-consecutive winning days of $150+ net; payout-request day does not count toward the next five; positive net profit since last payout (first payout exempt). Consistency path: 3 trading days, largest day <= 40% of total net profit. Each payout up to 50% of the account balance, max $5,000 (Standard) / $6,000 (Consistency). A limited-time DLL offer may double caps."}
+      }
+    },
+    {
+      "code": "topstep_xfa_100k", "label": "Express Funded Account 100K", "stage": "funded", "account_size": 100000,
+      "rules": {
+        "starting_balance": {"value": null, "unit": "USD", "status": "UNVERIFIED", "source_url": "https://help.topstep.com/en/articles/8284215-express-funded-account-parameters", "notes": "Enter manually."},
+        "max_loss": {"value": null, "unit": "USD", "status": "UNVERIFIED", "source_url": "https://help.topstep.com/en/articles/8284215-express-funded-account-parameters", "notes": "Enter manually."},
+        "drawdown_model": {"value": {"type": "eod_trailing", "lock_floor_offset": 0, "lock_on_payout": true, "breach_basis": "intraday_equity"}, "status": "UNVERIFIED", "source_url": "https://help.topstep.com/en/articles/8284233-topstep-payout-policy"},
+        "scaling_plan": {"value": null, "status": "UNVERIFIED", "source_url": "https://help.topstep.com/en/articles/8284215-express-funded-account-parameters"},
+        "payout_paths": {"value": [
+          {"name": "Standard", "winning_days_required": 5, "winning_day_threshold": 150, "require_positive_cycle_profit": true, "cap": {"pct": 0.5, "basis": "balance_above_start", "max_amount": 5000}},
+          {"name": "Consistency", "min_trading_days": 3, "consistency_threshold": 0.4, "require_positive_cycle_profit": true, "cap": {"pct": 0.5, "basis": "balance_above_start", "max_amount": 6000}}
+        ], "status": "UNVERIFIED", "source_url": "https://help.topstep.com/en/articles/8284233-topstep-payout-policy"}
+      }
+    },
+    {
+      "code": "topstep_xfa_150k", "label": "Express Funded Account 150K", "stage": "funded", "account_size": 150000,
+      "rules": {
+        "starting_balance": {"value": null, "unit": "USD", "status": "UNVERIFIED", "source_url": "https://help.topstep.com/en/articles/8284215-express-funded-account-parameters", "notes": "Enter manually."},
+        "max_loss": {"value": null, "unit": "USD", "status": "UNVERIFIED", "source_url": "https://help.topstep.com/en/articles/8284215-express-funded-account-parameters", "notes": "Enter manually."},
+        "drawdown_model": {"value": {"type": "eod_trailing", "lock_floor_offset": 0, "lock_on_payout": true, "breach_basis": "intraday_equity"}, "status": "UNVERIFIED", "source_url": "https://help.topstep.com/en/articles/8284233-topstep-payout-policy"},
+        "scaling_plan": {"value": null, "status": "UNVERIFIED", "source_url": "https://help.topstep.com/en/articles/8284215-express-funded-account-parameters"},
+        "payout_paths": {"value": [
+          {"name": "Standard", "winning_days_required": 5, "winning_day_threshold": 150, "require_positive_cycle_profit": true, "cap": {"pct": 0.5, "basis": "balance_above_start", "max_amount": 5000}},
+          {"name": "Consistency", "min_trading_days": 3, "consistency_threshold": 0.4, "require_positive_cycle_profit": true, "cap": {"pct": 0.5, "basis": "balance_above_start", "max_amount": 6000}}
+        ], "status": "UNVERIFIED", "source_url": "https://help.topstep.com/en/articles/8284233-topstep-payout-policy"}
+      }
+    }
+  ]
+}

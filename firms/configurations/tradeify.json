@@ -1,0 +1,119 @@
+{
+  "firm_code": "tradeify",
+  "firm_name": "Tradeify",
+  "website": "https://tradeify.co",
+  "config_version": "2026-10-16",
+  "verification_summary": "No value in this file is VERIFIED. help.tradeify.co could not be fetched from the build environment (network policy). Values marked UNVERIFIED or CONFLICTING were taken from web-search summaries of the official help-center pages on 2026-10-16. Tradeify notes that older accounts can keep legacy parameters (e.g. a $2,500 50K Select target) - confirm against YOUR dashboard and the official page, then record each value as USER_CONFIRMED. null means not found - enter manually.",
+  "retrieval": "web_search_summary 2026-10-16 (official page not fetched)",
+  "firm_rules": {
+    "trading_close_time": {"value": "16:45 America/New_York", "status": "CONFLICTING", "source_url": "https://help.tradeify.co/en/articles/10495876-rules-permitted-times-to-trade", "notes": "Help center/FAQ: close all positions by 4:45 PM ET (12:59 PM ET on holiday early-close days). A Tradeify blog post says 4:59 PM ET."},
+    "overnight_positions": {"value": false, "status": "UNVERIFIED", "source_url": "https://help.tradeify.co/en/articles/12268167-essential-trading-rules-overview", "notes": "No overnight positions on ALL account types, including Live."},
+    "news_trading": {"value": "Permitted (trade news at your own risk; slippage warning).", "status": "UNVERIFIED", "source_url": "https://help.tradeify.co/en/articles/10495874-rules-news-trading"},
+    "automation_policy": {"value": "Bots/algorithms allowed only if the trader is the sole owner of the strategy and it is not HFT; using the same strategy across multiple firms is against policy; trader is fully responsible for automated activity.", "status": "UNVERIFIED", "source_url": "https://tradeify.co/funded-trader-agreement", "notes": "See also https://help.tradeify.co/en/articles/17069653-risk-compliance-guidelines-faq. This application places no orders."},
+    "prohibited_strategies": {"value": "Exploiting platform errors, disruptive practices, trading on external/delayed feeds, team trading and trade copying between people. Microscalping rule: more than 50% of profits must come from trades held at least 10 seconds (blog source).", "status": "UNVERIFIED", "source_url": "https://tradeify.co/funded-trader-agreement"},
+    "hedging": {"value": "On Select accounts minis and micros may not be held simultaneously (treated as hedging). Lightning accounts may hold both within the combined limit.", "status": "UNVERIFIED", "source_url": "https://help.tradeify.co/en/articles/12853921-select-evaluation-accounts"},
+    "inactivity": {"value": "At least one trade per week (Mon-Fri) on each evaluation account or it may be closed after an email warning.", "status": "UNVERIFIED", "source_url": "https://help.tradeify.co/en/articles/12853921-select-evaluation-accounts"}
+  },
+  "account_types": [
+    {
+      "code": "tradeify_select_eval_25k", "label": "Select Evaluation 25K", "stage": "evaluation", "account_size": 25000,
+      "rules": {
+        "starting_balance": {"value": 25000, "unit": "USD", "status": "UNVERIFIED", "source_url": "https://help.tradeify.co/en/articles/12853921-select-evaluation-accounts"},
+        "profit_target": {"value": 1500, "unit": "USD", "status": "UNVERIFIED", "source_url": "https://help.tradeify.co/en/articles/13252431-select-vs-growth-choosing-your-evaluation-type"},
+        "max_loss": {"value": 1000, "unit": "USD", "status": "UNVERIFIED", "source_url": "https://help.tradeify.co/en/articles/13252431-select-vs-growth-choosing-your-evaluation-type"},
+        "drawdown_model": {"value": {"type": "eod_trailing", "lock_floor_offset": null, "lock_on_payout": false, "breach_basis": "intraday_equity"}, "status": "UNVERIFIED", "source_url": "https://help.tradeify.co/en/articles/12853921-select-evaluation-accounts", "notes": "End-of-day trailing; recalculated at the close but enforced in real time (touching the floor intraday fails the account)."},
+        "daily_loss_limit": {"value": {"amount": null, "type": "none"}, "status": "UNVERIFIED", "source_url": "https://help.tradeify.co/en/articles/12853921-select-evaluation-accounts", "notes": "Select has no daily loss limit during evaluation."},
+        "max_contracts_minis": {"value": 1, "status": "CONFLICTING", "source_url": "https://help.tradeify.co/en/articles/12853921-select-evaluation-accounts", "notes": "One summary: 1 mini / 10 micros; another: 2 / 20."},
+        "max_contracts_micros": {"value": 10, "status": "CONFLICTING", "source_url": "https://help.tradeify.co/en/articles/12853921-select-evaluation-accounts"},
+        "consistency": {"value": {"formula": "largest_day_over_total_profit", "threshold": 0.4}, "status": "UNVERIFIED", "source_url": "https://help.tradeify.co/en/articles/12853921-select-evaluation-accounts", "notes": "No single day may exceed 40% of total profit (evaluation only)."},
+        "min_trading_days": {"value": 3, "status": "UNVERIFIED", "source_url": "https://help.tradeify.co/en/articles/12853921-select-evaluation-accounts"}
+      }
+    },
+    {
+      "code": "tradeify_select_eval_50k", "label": "Select Evaluation 50K", "stage": "evaluation", "account_size": 50000,
+      "rules": {
+        "starting_balance": {"value": 50000, "unit": "USD", "status": "UNVERIFIED", "source_url": "https://help.tradeify.co/en/articles/12853921-select-evaluation-accounts"},
+        "profit_target": {"value": 3000, "unit": "USD", "status": "CONFLICTING", "source_url": "https://help.tradeify.co/en/articles/12853921-select-evaluation-accounts", "notes": "$3,000 currently; accounts purchased before the new dashboard keep the original $2,500 target, including on reset."},
+        "max_loss": {"value": 2000, "unit": "USD", "status": "UNVERIFIED", "source_url": "https://help.tradeify.co/en/articles/12853921-select-evaluation-accounts"},
+        "drawdown_model": {"value": {"type": "eod_trailing", "lock_floor_offset": null, "lock_on_payout": false, "breach_basis": "intraday_equity"}, "status": "UNVERIFIED", "source_url": "https://help.tradeify.co/en/articles/12853921-select-evaluation-accounts"},
+        "daily_loss_limit": {"value": {"amount": null, "type": "none"}, "status": "UNVERIFIED", "source_url": "https://help.tradeify.co/en/articles/12853921-select-evaluation-accounts"},
+        "max_contracts_minis": {"value": 4, "status": "UNVERIFIED", "source_url": "https://help.tradeify.co/en/articles/12853921-select-evaluation-accounts"},
+        "max_contracts_micros": {"value": 40, "status": "UNVERIFIED", "source_url": "https://help.tradeify.co/en/articles/12853921-select-evaluation-accounts"},
+        "consistency": {"value": {"formula": "largest_day_over_total_profit", "threshold": 0.4}, "status": "UNVERIFIED", "source_url": "https://help.tradeify.co/en/articles/12853921-select-evaluation-accounts", "notes": "A 50% consistency add-on is mentioned as available."},
+        "min_trading_days": {"value": 3, "status": "UNVERIFIED", "source_url": "https://help.tradeify.co/en/articles/12853921-select-evaluation-accounts"}
+      }
+    },
+    {
+      "code": "tradeify_select_eval_100k", "label": "Select Evaluation 100K", "stage": "evaluation", "account_size": 100000,
+      "rules": {
+        "starting_balance": {"value": 100000, "unit": "USD", "status": "UNVERIFIED", "source_url": "https://help.tradeify.co/en/articles/12853921-select-evaluation-accounts"},
+        "profit_target": {"value": 6000, "unit": "USD", "status": "UNVERIFIED", "source_url": "https://help.tradeify.co/en/articles/13252431-select-vs-growth-choosing-your-evaluation-type"},
+        "max_loss": {"value": 3000, "unit": "USD", "status": "UNVERIFIED", "source_url": "https://help.tradeify.co/en/articles/13252431-select-vs-growth-choosing-your-evaluation-type"},
+        "drawdown_model": {"value": {"type": "eod_trailing", "lock_floor_offset": null, "lock_on_payout": false, "breach_basis": "intraday_equity"}, "status": "UNVERIFIED", "source_url": "https://help.tradeify.co/en/articles/12853921-select-evaluation-accounts"},
+        "daily_loss_limit": {"value": {"amount": null, "type": "none"}, "status": "UNVERIFIED", "source_url": "https://help.tradeify.co/en/articles/12853921-select-evaluation-accounts"},
+        "max_contracts_minis": {"value": 8, "status": "UNVERIFIED", "source_url": "https://help.tradeify.co/en/articles/12853921-select-evaluation-accounts"},
+        "max_contracts_micros": {"value": 80, "status": "UNVERIFIED", "source_url": "https://help.tradeify.co/en/articles/12853921-select-evaluation-accounts"},
+        "consistency": {"value": {"formula": "largest_day_over_total_profit", "threshold": 0.4}, "status": "UNVERIFIED", "source_url": "https://help.tradeify.co/en/articles/12853921-select-evaluation-accounts"},
+        "min_trading_days": {"value": 3, "status": "UNVERIFIED", "source_url": "https://help.tradeify.co/en/articles/12853921-select-evaluation-accounts"}
+      }
+    },
+    {
+      "code": "tradeify_select_eval_150k", "label": "Select Evaluation 150K", "stage": "evaluation", "account_size": 150000,
+      "rules": {
+        "starting_balance": {"value": 150000, "unit": "USD", "status": "UNVERIFIED", "source_url": "https://help.tradeify.co/en/articles/12853921-select-evaluation-accounts"},
+        "profit_target": {"value": 9000, "unit": "USD", "status": "UNVERIFIED", "source_url": "https://help.tradeify.co/en/articles/13252431-select-vs-growth-choosing-your-evaluation-type"},
+        "max_loss": {"value": 4500, "unit": "USD", "status": "UNVERIFIED", "source_url": "https://help.tradeify.co/en/articles/13252431-select-vs-growth-choosing-your-evaluation-type"},
+        "drawdown_model": {"value": {"type": "eod_trailing", "lock_floor_offset": null, "lock_on_payout": false, "breach_basis": "intraday_equity"}, "status": "UNVERIFIED", "source_url": "https://help.tradeify.co/en/articles/12853921-select-evaluation-accounts"},
+        "daily_loss_limit": {"value": {"amount": null, "type": "none"}, "status": "UNVERIFIED", "source_url": "https://help.tradeify.co/en/articles/12853921-select-evaluation-accounts"},
+        "max_contracts_minis": {"value": 12, "status": "UNVERIFIED", "source_url": "https://help.tradeify.co/en/articles/12853921-select-evaluation-accounts"},
+        "max_contracts_micros": {"value": 120, "status": "UNVERIFIED", "source_url": "https://help.tradeify.co/en/articles/12853921-select-evaluation-accounts"},
+        "consistency": {"value": {"formula": "largest_day_over_total_profit", "threshold": 0.4}, "status": "UNVERIFIED", "source_url": "https://help.tradeify.co/en/articles/12853921-select-evaluation-accounts"},
+        "min_trading_days": {"value": 3, "status": "UNVERIFIED", "source_url": "https://help.tradeify.co/en/articles/12853921-select-evaluation-accounts"}
+      }
+    },
+    {
+      "code": "tradeify_growth_eval_50k", "label": "Growth Evaluation 50K", "stage": "evaluation", "account_size": 50000,
+      "rules": {
+        "starting_balance": {"value": 50000, "unit": "USD", "status": "UNVERIFIED", "source_url": "https://help.tradeify.co/en/articles/10495915-growth-evaluation-accounts"},
+        "profit_target": {"value": 3000, "unit": "USD", "status": "UNVERIFIED", "source_url": "https://help.tradeify.co/en/articles/10495915-growth-evaluation-accounts"},
+        "max_loss": {"value": 2000, "unit": "USD", "status": "UNVERIFIED", "source_url": "https://help.tradeify.co/en/articles/10495915-growth-evaluation-accounts"},
+        "drawdown_model": {"value": {"type": "eod_trailing", "lock_floor_offset": null, "lock_on_payout": false, "breach_basis": "intraday_equity"}, "status": "UNVERIFIED", "source_url": "https://help.tradeify.co/en/articles/10495915-growth-evaluation-accounts"},
+        "daily_loss_limit": {"value": {"amount": 1250, "type": "soft_pause"}, "status": "UNVERIFIED", "source_url": "https://help.tradeify.co/en/articles/10468321-rules-daily-loss-limit", "notes": "Soft breach: trading pauses for the day; the account is not failed. Do not use the DLL as a stop loss."},
+        "max_contracts_minis": {"value": null, "status": "UNVERIFIED", "source_url": "https://help.tradeify.co/en/articles/10495915-growth-evaluation-accounts", "notes": "Not found - enter manually."},
+        "max_contracts_micros": {"value": null, "status": "UNVERIFIED", "source_url": "https://help.tradeify.co/en/articles/10495915-growth-evaluation-accounts"},
+        "consistency": {"value": null, "status": "UNVERIFIED", "source_url": "https://help.tradeify.co/en/articles/10495915-growth-evaluation-accounts", "notes": "No consistency rule during the Growth evaluation (funded Growth accounts reportedly have a 35% rule)."},
+        "min_trading_days": {"value": 1, "status": "UNVERIFIED", "source_url": "https://help.tradeify.co/en/articles/10495915-growth-evaluation-accounts"}
+      }
+    },
+    {
+      "code": "tradeify_select_flex_50k", "label": "Select Funded 50K - Flex (5-day) payouts", "stage": "funded", "account_size": 50000,
+      "rules": {
+        "starting_balance": {"value": 50000, "unit": "USD", "status": "UNVERIFIED", "source_url": "https://help.tradeify.co/en/articles/12853966-select-flex-and-select-daily-payout-policies"},
+        "max_loss": {"value": 2000, "unit": "USD", "status": "UNVERIFIED", "source_url": "https://help.tradeify.co/en/articles/12853966-select-flex-and-select-daily-payout-policies"},
+        "drawdown_model": {"value": {"type": "eod_trailing", "lock_floor_offset": 100, "lock_on_payout": true, "breach_basis": "intraday_equity"}, "status": "UNVERIFIED", "source_url": "https://help.tradeify.co/en/articles/12853966-select-flex-and-select-daily-payout-policies", "notes": "Trailing drawdown locks at starting balance + $100 once the EOD balance exceeds the drawdown by $100 (EOD $52,100 on 50K), or immediately when a payout is requested - whichever comes first."},
+        "daily_loss_limit": {"value": {"amount": null, "type": "none"}, "status": "UNVERIFIED", "source_url": "https://help.tradeify.co/en/articles/12853966-select-flex-and-select-daily-payout-policies", "notes": "Flex funded accounts have no DLL; only the max trailing drawdown applies."},
+        "max_contracts_minis": {"value": 2, "status": "UNVERIFIED", "source_url": "https://help.tradeify.co/en/articles/12853966-select-flex-and-select-daily-payout-policies", "notes": "Starting limit; scales to 4 minis / 40 micros as the EOD balance grows (thresholds not retrieved)."},
+        "max_contracts_micros": {"value": 20, "status": "UNVERIFIED", "source_url": "https://help.tradeify.co/en/articles/12853966-select-flex-and-select-daily-payout-policies"},
+        "consistency": {"value": null, "status": "UNVERIFIED", "source_url": "https://help.tradeify.co/en/articles/12853966-select-flex-and-select-daily-payout-policies", "notes": "Consistency rule removed after passing the Select evaluation."},
+        "payout_paths": {"value": [
+          {"name": "Flex (5 winning days)", "winning_days_required": 5, "winning_day_threshold": 150, "require_positive_cycle_profit": true, "cap": {"pct": 0.5, "basis": "profit", "max_amount": 2500}}
+        ], "status": "CONFLICTING", "source_url": "https://help.tradeify.co/en/articles/12853966-select-flex-and-select-daily-payout-policies", "notes": "Winning-day minimum $150 (50K) comes from a Tradeify blog post. Cap: up to 50% of total profit, $2,500 per payout for accounts bought after Sept 1 2026; other help-center text lists $3,000. The choice of Flex vs Daily is permanent per account."}
+      }
+    },
+    {
+      "code": "tradeify_select_daily_50k", "label": "Select Funded 50K - Daily payouts", "stage": "funded", "account_size": 50000,
+      "rules": {
+        "starting_balance": {"value": 50000, "unit": "USD", "status": "UNVERIFIED", "source_url": "https://help.tradeify.co/en/articles/12853966-select-flex-and-select-daily-payout-policies"},
+        "max_loss": {"value": 2000, "unit": "USD", "status": "UNVERIFIED", "source_url": "https://help.tradeify.co/en/articles/12853966-select-flex-and-select-daily-payout-policies"},
+        "drawdown_model": {"value": {"type": "eod_trailing", "lock_floor_offset": 100, "lock_on_payout": true, "breach_basis": "intraday_equity"}, "status": "UNVERIFIED", "source_url": "https://help.tradeify.co/en/articles/12853966-select-flex-and-select-daily-payout-policies"},
+        "daily_loss_limit": {"value": {"amount": 1000, "type": "soft_pause"}, "status": "UNVERIFIED", "source_url": "https://help.tradeify.co/en/articles/12853966-select-flex-and-select-daily-payout-policies", "notes": "Select Daily DLL: $500 (25K), $1,000 (50K), $1,250 (100K), $1,750 (150K). A DLL hit pauses trading for the day."},
+        "max_contracts_minis": {"value": 2, "status": "UNVERIFIED", "source_url": "https://help.tradeify.co/en/articles/12853966-select-flex-and-select-daily-payout-policies"},
+        "max_contracts_micros": {"value": 20, "status": "UNVERIFIED", "source_url": "https://help.tradeify.co/en/articles/12853966-select-flex-and-select-daily-payout-policies"},
+        "consistency": {"value": null, "status": "UNVERIFIED", "source_url": "https://help.tradeify.co/en/articles/12853966-select-flex-and-select-daily-payout-policies"},
+        "payout_paths": {"value": [
+          {"name": "Daily", "require_positive_cycle_profit": true, "cap": {"multiple": 2.0, "basis": "cycle_profit_multiple", "max_amount": 1000}}
+        ], "status": "CONFLICTING", "source_url": "https://help.tradeify.co/en/articles/12853966-select-flex-and-select-daily-payout-policies", "notes": "Payouts available daily once the account is above a buffer (buffer amount not retrieved); withdrawals capped at 2x cycle profit; per-payout cap reported as $1,000 but sources differ."}
+      }
+    }
+  ]
+}

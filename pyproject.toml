@@ -1,0 +1,58 @@
+[project]
+name = "break-retest-copilot"
+version = "0.1.0"
+description = "Analysis-only futures trading copilot: break-and-retest detection, setup scoring, manual trade management guidance, and prop-firm (Tradeify / Topstep) risk tracking. Never places, modifies or cancels orders."
+readme = "README.md"
+requires-python = ">=3.11"
+license = { text = "Proprietary - personal use" }
+# Lower bounds are the versions the test suite was run against; upper bounds
+# stop an unreviewed major-version upgrade. Exact tested versions are in
+# requirements-lock.txt.
+dependencies = [
+    "streamlit>=1.40,<2",
+    "pandas>=2.2,<4",
+    "numpy>=2.0,<3",
+    "plotly>=5.22,<8",
+    "pydantic>=2.7,<3",
+    "python-dotenv>=1.0,<2",
+    "requests>=2.31,<3",
+]
+
+[project.optional-dependencies]
+dev = [
+    "pytest>=8,<10",
+    "ruff>=0.5",
+    "mypy>=1.10",
+]
+# Optional, untested live-data adapter (requires a paid Databento account).
+databento = ["databento>=0.40"]
+# Optional plain-English rephrasing of setups via the Claude API.
+explain = ["anthropic>=1.0,<2"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+pythonpath = ["."]
+addopts = "-q"
+filterwarnings = [
+    "error::pandas.errors.ChainedAssignmentError",
+]
+
+[tool.ruff]
+line-length = 110
+target-version = "py311"
+extend-exclude = ["var", ".venv"]
+
+[tool.ruff.lint]
+select = ["E", "F", "W", "I", "B", "UP", "SIM"]
+ignore = ["E501", "B008", "SIM108"]
+
+[tool.ruff.lint.per-file-ignores]
+"app_pages/*.py" = ["E402"]
+"app.py" = ["E402"]
+
+[tool.mypy]
+python_version = "3.11"
+ignore_missing_imports = true
+warn_unused_ignores = false
+check_untyped_defs = false
+files = ["core", "firms", "data", "notifications", "services"]
