@@ -102,6 +102,23 @@ def quality_table(report) -> pd.DataFrame:
     )
 
 
+def check_rows(checks: list[dict]) -> pd.DataFrame:
+    """Breakout checks (``Check.as_dict()`` records) as a display table with text columns."""
+    return pd.DataFrame(
+        [
+            {
+                "check": c["name"],
+                "mode": c["mode"],
+                "result": "n/a" if c["passed"] is None else ("pass" if c["passed"] else "FAIL"),
+                "value": str(c["value"]),
+                "threshold": str(c["threshold"]),
+                "detail": c["message"],
+            }
+            for c in checks
+        ]
+    )
+
+
 def plan_rows(s: Setup, spec: InstrumentSpec) -> pd.DataFrame:
     p = s.plan
     if p is None:

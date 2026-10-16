@@ -124,7 +124,7 @@ with tab_sig:
                 if rec.get("breakout_eval"):
                     with st.expander("Breakout details"):
                         st.dataframe(
-                            pd.DataFrame(rec["breakout_eval"]["checks"]), hide_index=True, width="stretch"
+                            ui.check_rows(rec["breakout_eval"]["checks"]), hide_index=True, width="stretch"
                         )
             with c2:
                 if rec["components"]:

@@ -604,7 +604,7 @@ with tab_risk:
                 [
                     {
                         "limit": lc.name,
-                        "max contracts": lc.contracts if lc.contracts is not None else "not applied",
+                        "max contracts": str(lc.contracts) if lc.contracts is not None else "not applied",
                         "basis": lc.detail,
                         "binding": "<- binding" if lc.name in res.binding_constraints else "",
                     }

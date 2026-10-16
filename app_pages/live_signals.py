@@ -183,19 +183,7 @@ def _setup_detail(x) -> None:
         if x.breakout_eval is not None:
             st.markdown("**Breakout checks**")
             st.dataframe(
-                pd.DataFrame(
-                    [
-                        {
-                            "check": c.name,
-                            "mode": c.mode,
-                            "result": "n/a" if c.passed is None else ("pass" if c.passed else "FAIL"),
-                            "value": str(c.value),
-                            "threshold": str(c.threshold),
-                            "detail": c.message,
-                        }
-                        for c in x.breakout_eval.checks
-                    ]
-                ),
+                ui.check_rows([c.as_dict() for c in x.breakout_eval.checks]),
                 hide_index=True,
                 width="stretch",
             )
