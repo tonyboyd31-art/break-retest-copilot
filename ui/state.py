@@ -169,8 +169,8 @@ def render_sidebar() -> None:
     ctx = app()
     ss = st.session_state
     with st.sidebar:
-        st.markdown("### Break & Retest Copilot")
-        st.caption("Analysis & decision support only. This app never places, modifies or cancels orders.")
+        st.markdown('<div class="brc-eyebrow">Market &amp; data</div>', unsafe_allow_html=True)
+        st.caption("Choose what to analyse - every page uses this selection.")
         symbols = ctx.registry.symbols()
         default_sym = ss.get("sel_instrument", s.general.default_instrument)
         sym = st.selectbox(
@@ -199,7 +199,9 @@ def render_sidebar() -> None:
         if src == "csv":
             ds = [d for d in repo.list_datasets(db()) if d["instrument"] == sym]
             if not ds:
-                st.info("No imported CSV for this instrument. Import one under Settings & Data Sources.")
+                st.info(
+                    "No imported CSV for this instrument. Import one under More -> Settings -> Data sources."
+                )
                 ss["sel_dataset"] = None
             else:
                 ids = [d["id"] for d in ds]
@@ -288,7 +290,11 @@ def render_sidebar() -> None:
         total = sum(unack.values())
         if total:
             hi = unack.get("critical", 0) + unack.get("high", 0)
-            st.markdown(f"**{total}** unacknowledged alert(s)" + (f" - **{hi} high/critical**" if hi else ""))
+            st.page_link(
+                "app_pages/alerts.py",
+                label=f"{total} new alert{'s' if total != 1 else ''}" + (f" - {hi} urgent" if hi else ""),
+                icon=":material/notifications:",
+            )
         if ss.get("settings_warnings"):
             for w in ss["settings_warnings"]:
                 st.warning(w)

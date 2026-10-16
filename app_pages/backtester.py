@@ -17,7 +17,9 @@ tz = state.tz()
 db = state.db()
 ui.page_header(
     "Backtesting Lab",
-    "Historical replay using only information available at each bar. Results are hypothetical.",
+    "Test the strategy on past data using only what was knowable at each bar. Results are hypothetical.",
+    eyebrow="Research",
+    accent="Lab",
 )
 
 ctx = state.market_context(process=False)
@@ -34,7 +36,7 @@ st.markdown(
 if md.feed_type == "simulated":
     st.warning(
         "SYNTHETIC DATA - useful for checking mechanics only. It says nothing about real-market profitability. "
-        "Import real historical candles (Settings & Data Sources) for research."
+        "Import real historical candles (More -> Settings -> Data sources) for research."
     )
 
 tab_run, tab_sens, tab_saved = st.tabs(["Run backtest", "Sensitivity analysis", "Saved runs"])

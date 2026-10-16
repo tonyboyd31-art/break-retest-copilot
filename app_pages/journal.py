@@ -19,8 +19,10 @@ tz = state.tz()
 db = state.db()
 ui.page_header(
     "Trade Journal",
-    "Signals and executed trades are separate records. A hypothetical signal outcome is "
+    "Signals and the trades you actually took are kept separately. A hypothetical signal result is "
     "never account profit.",
+    eyebrow="Records",
+    accent="Journal",
 )
 
 tab_sig, tab_exec, tab_audit = st.tabs(["Signal journal", "Executed trades", "Audit log"])
@@ -145,12 +147,12 @@ with tab_sig:
                         "_HYPOTHETICAL - not an executed trade._"
                     )
                 else:
-                    st.caption("Not evaluated. Use Analytics -> Signal outcomes.")
+                    st.caption("Not evaluated. Use More -> Stats -> Signal outcomes.")
 
 with tab_exec:
     trades = repo.list_trades(db, include_void=True)
     if not trades:
-        st.info("No trades registered yet (Trade Manager -> Register trade).")
+        st.info("No trades logged yet (My Trades -> Register trade).")
     else:
         st.dataframe(
             pd.DataFrame(

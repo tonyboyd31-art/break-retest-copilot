@@ -70,16 +70,16 @@ a local install.
 
 | Page | What you get |
 |---|---|
-| **Overview** | Feed status (live / delayed / historical / simulated, fresh / stale), pending and qualified setups, open trades with current R, account risk cards, recent alerts. |
-| **Live Market Signals** | Candlestick chart with zones, confirmed swings, VWAP and breakout / retest / confirmation markers; qualified signals with the full advisory plan, score breakdown, breakout checks and state history; pending setups; every rejected / expired / invalidated setup with its reason. Replay auto-advance or 60-second refresh. Optional plain-English rephrasing by Claude. |
-| **Support & Resistance** | Zones with reactions, tests, holds, failures, break / retest status, distance, relevance and an explainable strength breakdown; confirmed swing table with pivot vs confirmation times; provisional (unconfirmed) pivots shown separately. |
-| **Trade Manager** | Register a trade you placed (optionally linked to a setup); R-multiple tracking; breakeven-review prompts; profit-protection prompts; trailing-stop suggestions from newly confirmed swings; thesis / invalidation warnings; record what you actually did (append-only audit trail with corrections); standalone risk / position-size calculator. |
-| **Firm & Account Manager** | Multiple Tradeify / Topstep accounts; per-account drawdown model, evaluation progress, consistency ratio, payout checklist (all labelled *estimates*); daily P&L and payout logs; the full rule table with official source links, verification status and dates; confirm / override any rule. |
-| **Backtesting Lab** | Chronological replay with conservative fills, commission and slippage, optional breakeven / trailing rules, in-sample / out-of-sample split, breakdowns by session / score bucket / regime / exit reason, threshold and structural sensitivity grids with overfitting warnings, saved runs with settings-mismatch warnings. |
-| **Analytics** | Three separate views that are never mixed: backtests (hypothetical), signal outcomes (hypothetical), and your actual recorded trades. |
-| **Trade Journal** | Signal journal (every detected setup, including rejected ones, with stored score components and hypothetical outcome) and the executed-trade journal (notes, tags, screenshot references, mistakes, rule adherence, emotions, broker-statement P&L); audit log. |
-| **Alerts Center** | De-duplicated alerts with trigger time, issue time, severity, delivery status and your response (reviewed / dismissed / action recorded); channel and category configuration; Telegram test. |
-| **Settings & Data Sources** | Every parameter, validated before saving (strategy changes are flagged against saved backtests); CSV import with a validation report; dataset management; adapter status; instrument registry with a calculated contract calendar. |
+| **Home** | Feed status (live / delayed / historical / simulated, fresh / stale), pending and qualified setups, open trades with current R, account risk cards, recent alerts. |
+| **Signals** | Candlestick chart with zones, confirmed swings, VWAP and breakout / retest / confirmation markers; qualified signals with the full advisory plan, score breakdown, breakout checks and state history; pending setups; every rejected / expired / invalidated setup with its reason. Replay auto-advance or 60-second refresh. Optional plain-English rephrasing by Claude. |
+| **Levels** | Zones with reactions, tests, holds, failures, break / retest status, distance, relevance and an explainable strength breakdown; confirmed swing table with pivot vs confirmation times; provisional (unconfirmed) pivots shown separately. |
+| **My Trades** | Register a trade you placed (optionally linked to a setup); R-multiple tracking; breakeven-review prompts; profit-protection prompts; trailing-stop suggestions from newly confirmed swings; thesis / invalidation warnings; record what you actually did (append-only audit trail with corrections); standalone risk / position-size calculator. |
+| **Accounts** | Multiple Tradeify / Topstep accounts; per-account drawdown model, evaluation progress, consistency ratio, payout checklist (all labelled *estimates*); daily P&L and payout logs; the full rule table with official source links, verification status and dates; confirm / override any rule. |
+| **More -> Backtest** | Chronological replay with conservative fills, commission and slippage, optional breakeven / trailing rules, in-sample / out-of-sample split, breakdowns by session / score bucket / regime / exit reason, threshold and structural sensitivity grids with overfitting warnings, saved runs with settings-mismatch warnings. |
+| **More -> Stats** | Three separate views that are never mixed: backtests (hypothetical), signal outcomes (hypothetical), and your actual recorded trades. |
+| **More -> Journal** | Signal journal (every detected setup, including rejected ones, with stored score components and hypothetical outcome) and the executed-trade journal (notes, tags, screenshot references, mistakes, rule adherence, emotions, broker-statement P&L); audit log. |
+| **More -> Alerts** | De-duplicated alerts with trigger time, issue time, severity, delivery status and your response (reviewed / dismissed / action recorded); channel and category configuration; Telegram test. |
+| **More -> Settings** | Every parameter, validated before saving (strategy changes are flagged against saved backtests); CSV import with a validation report; dataset management; adapter status; instrument registry with a calculated contract calendar. |
 
 Instruments: **NQ, MNQ, ES, MES, GC, MGC** (configurable in `configurations/instruments.json`).
 
@@ -182,7 +182,7 @@ instrument (seed 123, 60 trade days ending 2026-10-16 - change these under *Sett
 
 ## Using your own data (CSV)
 
-*Settings & Data Sources -> Import CSV.* One row per 5-minute bar:
+*More -> Settings -> Data sources -> Import CSV.* One row per 5-minute bar:
 
 | Column | Required | Notes |
 |---|---|---|
@@ -237,7 +237,7 @@ Copy `.env.example` to `.env` (git-ignored). All are optional.
 | `BRC_DB_PATH` | SQLite path (default `var/copilot.db`). |
 | `BRC_EPHEMERAL_STORAGE` | `1` shows / `0` hides the "temporary storage" warning; empty auto-detects Streamlit Community Cloud. |
 | `DATABENTO_API_KEY` | Databento adapter (untested). |
-| `TELEGRAM_BOT_TOKEN`, `TELEGRAM_CHAT_ID` | Telegram alerts (enable in *Alerts Center -> Channels*). |
+| `TELEGRAM_BOT_TOKEN`, `TELEGRAM_CHAT_ID` | Telegram alerts (enable in *More -> Alerts -> Channels*). |
 | `ANTHROPIC_API_KEY`, `BRC_EXPLAINER_MODEL` | Optional Claude rephrasing of setup explanations (default model `claude-opus-5-5`, server-side refusal fallbacks enabled). |
 
 Secrets are read only from the environment. They are never stored in SQLite, logged, or shown in the UI
@@ -317,7 +317,7 @@ Funded 50K (Flex and Daily payout paths).
 
 **How to verify (recommended before each new account, and monthly):**
 
-1. *Firm & Account Manager -> Firm rules*: open each source link (official help center only).
+1. *Accounts -> Firm rules*: open each source link (official help center only).
 2. Check the value for **your exact account type and purchase date**.
 3. Record it under *Confirm or override a rule* with status `USER_CONFIRMED`, the URL and today's date. Your
    confirmation overrides the shipped value, is kept in the audit log, and survives config updates.
@@ -373,7 +373,7 @@ python scripts/ui_smoke.py --url http://localhost:8501 --chromium /path/to/chrom
 | CSV import errors | Read the validation table: ordering, duplicates, DST, contract/instrument mismatch. Nothing is auto-fixed. |
 | Settings reverted with a warning | Stored settings failed validation (e.g. after an upgrade); defaults were loaded. Re-apply your changes. |
 | Reset everything | Stop the app and delete `var/copilot.db*`. |
-| Telegram "not_configured" | Set both `TELEGRAM_BOT_TOKEN` and `TELEGRAM_CHAT_ID` in `.env`, restart, enable in Alerts Center. |
+| Telegram "not_configured" | Set both `TELEGRAM_BOT_TOKEN` and `TELEGRAM_CHAT_ID` in `.env`, restart, enable under More -> Alerts. |
 
 ---
 
@@ -387,7 +387,7 @@ python scripts/ui_smoke.py --url http://localhost:8501 --chromium /path/to/chrom
   Instrument specifications were entered from CME published specs at build time - confirm them (Settings ->
   Instruments).
 * Alerts fire only while the dashboard or `scripts/run_monitor.py` is running.
-* Breakeven / trailing logic in the Trade Manager uses completed 5-minute bars after the entry bar; intrabar
+* Breakeven / trailing logic in My Trades uses completed 5-minute bars after the entry bar; intrabar
   events are not visible.
 * Backtests on synthetic data say nothing about real profitability; small samples and a single period are
   flagged but not overcome. Sensitivity grids increase data-snooping risk - judge on out-of-sample results.

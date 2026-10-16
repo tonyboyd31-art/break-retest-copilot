@@ -1,10 +1,32 @@
 [theme]
+# Warm near-black with antique-gold accents; serif display headings.
 base = "dark"
-primaryColor = "#4C9AFF"
-backgroundColor = "#0D1117"
-secondaryBackgroundColor = "#161B22"
-textColor = "#E6EDF3"
-font = "sans serif"
+primaryColor = "#c8b16a"
+backgroundColor = "#0e0c09"
+secondaryBackgroundColor = "#1a1611"
+textColor = "#f1e9d8"
+linkColor = "#d6c27c"
+borderColor = "#2e281e"
+dataframeBorderColor = "#2a251c"
+dataframeHeaderBackgroundColor = "#17130e"
+dataframeHeaderTextColor = "#cfc6b3"
+showWidgetBorder = true
+baseRadius = "medium"
+buttonRadius = "full"
+font = "Inter:https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap, sans-serif"
+headingFont = "Cormorant Garamond:https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600&display=swap, serif"
+headingFontWeights = [500, 500, 600, 600, 600, 600]
+# Calmer callouts: warm-tinted warning and info boxes (errors keep the default red).
+yellowBackgroundColor = "#221c0f"
+yellowTextColor = "#ecd9a0"
+blueBackgroundColor = "#1a1712"
+blueTextColor = "#e6dcc6"
+chartCategoricalColors = ["#3987e5", "#d95926", "#199e70", "#c98500", "#9085e9", "#e66767"]
+
+[theme.sidebar]
+backgroundColor = "#110e0a"
+secondaryBackgroundColor = "#1a1611"
+borderColor = "#2a251c"
 
 [server]
 headless = true

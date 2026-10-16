@@ -15,8 +15,11 @@ from ui import components as ui
 s = state.settings()
 tz = state.tz()
 ui.page_header(
-    "Live Market Signals",
-    "Break-and-retest setups detected on completed 5-minute candles, with transparent scoring.",
+    "Market Signals",
+    "Break-and-retest setups found on completed 5-minute candles. Each one shows exactly why it scored "
+    "the way it did.",
+    eyebrow="Setups",
+    accent="Signals",
 )
 ui.safety_banner("A qualified signal is a candidate for YOUR review - not a trade, and not an instruction.")
 
@@ -77,9 +80,11 @@ others = sorted(
 )
 
 c1, c2, c3, c4 = st.columns(4)
-c1.metric("Qualified", len(qualified))
-c2.metric("Pending (awaiting retest/confirmation)", len(pending))
-c3.metric("Rejected / expired / invalidated", len(others))
+c1.metric("Ready", len(qualified), help="Met every rule and reached the minimum score.")
+c2.metric("Watching", len(pending), help="Broke a level and now waiting for a retest or confirmation.")
+c3.metric(
+    "Rejected or expired", len(others), help="Rejected, expired or invalidated - see the tab below for why."
+)
 c4.metric(
     "Minimum score",
     f"{s.scoring.min_score:g}/100",

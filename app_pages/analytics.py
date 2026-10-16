@@ -16,9 +16,10 @@ s = state.settings()
 tz = state.tz()
 db = state.db()
 ui.page_header(
-    "Analytics",
-    "Three separate sources that are never mixed: backtests, hypothetical signal outcomes, "
-    "and your actual recorded trades.",
+    "Performance Stats",
+    "Backtests, hypothetical signal outcomes and your real recorded trades - three sources, never mixed.",
+    eyebrow="Research",
+    accent="Stats",
 )
 
 tab_bt, tab_sig, tab_real = st.tabs(
@@ -39,7 +40,7 @@ def metric_block(m: dict) -> None:
 with tab_bt:
     runs = runs_frame(db)
     if runs.empty:
-        st.info("No backtests yet - run one in the Backtesting Lab.")
+        st.info("No backtests yet - run one under More -> Backtest.")
     else:
         rid = st.selectbox(
             "Run",

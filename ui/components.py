@@ -15,18 +15,56 @@ from services.market_service import MarketData
 from ui import theme as t
 
 
-def page_header(title: str, subtitle: str | None = None) -> None:
-    st.markdown(f"## {title}")
-    if subtitle:
-        st.markdown(f'<div class="brc-muted">{escape(subtitle)}</div>', unsafe_allow_html=True)
+def _title_html(title: str, accent: str | None) -> str:
+    html = escape(title)
+    if accent and accent in title:
+        html = html.replace(escape(accent), f'<span class="gold">{escape(accent)}</span>', 1)
+    return f'<div class="brc-title" role="heading" aria-level="1">{html}</div>'
+
+
+def page_header(
+    title: str, subtitle: str | None = None, eyebrow: str | None = None, accent: str | None = None
+) -> None:
+    """Small-caps eyebrow, serif title (``accent``, a word of ``title``, in gold) and a purpose line."""
+    st.markdown(
+        (f'<div class="brc-eyebrow">{escape(eyebrow)}</div>' if eyebrow else "")
+        + _title_html(title, accent)
+        + (f'<div class="brc-sub">{escape(subtitle)}</div>' if subtitle else ""),
+        unsafe_allow_html=True,
+    )
+
+
+def hero(title: str, subtitle: str, eyebrow: str, accent: str | None = None, chips: str = "") -> None:
+    """Centred page opener (Home)."""
+    st.markdown(
+        f'<div class="brc-hero"><div class="brc-eyebrow center">{escape(eyebrow)}</div>'
+        f'{_title_html(title, accent)}<div class="brc-sub">{escape(subtitle)}</div>{chips}</div>',
+        unsafe_allow_html=True,
+    )
+
+
+def chips(items: list[tuple[str, str]]) -> str:
+    """Outlined chips; each item is (icon name, already-escaped HTML label)."""
+    return (
+        '<div class="brc-chips">'
+        + "".join(
+            f'<span class="brc-chip">{t.icon(name)}<span>{label}</span></span>' for name, label in items
+        )
+        + "</div>"
+    )
+
+
+def notice(icon_name: str, html: str) -> None:
+    """Slim gold-outlined notice; ``html`` must already be escaped."""
+    st.markdown(f'<div class="brc-notice">{t.icon(icon_name)}<div>{html}</div></div>', unsafe_allow_html=True)
 
 
 def safety_banner(extra: str = "") -> None:
     st.markdown(
-        '<div class="brc-banner"><b>Analysis only.</b> This application never submits, modifies or cancels orders, '
-        "never moves stops and never takes profits. Every proposed level is advisory; every trade decision is yours."
+        f'<div class="brc-banner">{t.icon("shield")}<div><b>Analysis only.</b> Never places, changes or cancels '
+        "orders, moves stops or takes profits. Every level is a suggestion; every decision is yours."
         + (f" {escape(extra)}" if extra else "")
-        + "</div>",
+        + "</div></div>",
         unsafe_allow_html=True,
     )
 
@@ -58,22 +96,30 @@ def data_status(md: MarketData, tz: str, compact: bool = False) -> None:
             badges.append(t.badge(f"{md.quality.missing_bars} MISSING BARS", t.WARNING))
         if not md.quality.volume_reliable:
             badges.append(t.badge("NO RELIABLE VOLUME", t.WARNING))
-    clock = "Replay clock" if md.is_replay else "Wall clock"
-    info = (
-        f"<b>{escape(md.spec.symbol)}</b> {escape(md.contract or 'contract unknown')} &middot; "
-        f"{escape(md.source_label)} &middot; last bar closed {escape(to_display(md.as_of, tz))} &middot; "
-        f"{clock} {escape(to_display(md.now, tz))}"
-    )
+    clock = "Replay clock" if md.is_replay else "Clock"
+    fmt = "%a %b %d %H:%M %Z"
+    parts = [
+        f"<b>{escape(md.spec.symbol)}</b> {escape(md.contract or 'contract unknown')}",
+        escape(md.source_label),
+        f"last bar {escape(to_display(md.as_of, tz, fmt))}",
+        f"{clock} {escape(to_display(md.now, tz, fmt))}",
+    ]
+    if md.freshness and not compact:
+        parts.append(f'<span class="brc-muted">{escape(md.freshness.message)}</span>')
     st.markdown(
-        f'<div class="brc-card">{"".join(badges)}<div style="margin-top:6px;font-size:0.86rem">{info}</div>'
-        + (
-            f'<div class="brc-muted" style="margin-top:4px">{escape(md.freshness.message)}</div>'
-            if md.freshness and not compact
-            else ""
-        )
+        f'<div class="brc-status">{"".join(badges)}'
+        + '<span class="sep">|</span>'.join(f"<span>{p}</span>" for p in parts)
         + "</div>",
         unsafe_allow_html=True,
     )
+    data_alerts(md)
+    if not compact:
+        for note in md.notes:
+            st.caption(note)
+
+
+def data_alerts(md: MarketData) -> None:
+    """Blocking data problems (stale feed, failed validation) - always shown in full."""
     if md.freshness and md.freshness.is_stale:
         st.error(
             "Market data is STALE - new signal qualification is disabled and trade guidance cannot be relied on."
@@ -82,9 +128,6 @@ def data_status(md: MarketData, tz: str, compact: bool = False) -> None:
         st.error(
             "Data failed validation - scanning disabled: " + "; ".join(e.message for e in md.quality.errors)
         )
-    if not compact:
-        for note in md.notes:
-            st.caption(note)
 
 
 def quality_table(report) -> pd.DataFrame:

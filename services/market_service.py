@@ -103,7 +103,7 @@ def load_market(db: Database, settings: AppSettings, sel: MarketSelection) -> Ma
         full = _synthetic(spec.symbol, settings.data.synthetic_days, settings.data.synthetic_seed, end).copy()
     elif sel.source == "csv":
         if sel.dataset_id is None:
-            md.error = "No CSV dataset selected. Import one in Settings & Data Sources."
+            md.error = "No CSV dataset selected. Import one under More -> Settings -> Data sources."
             return md
         adapter_c = CsvDatasetAdapter(db, sel.dataset_id)
         md.adapter_status = adapter_c.status()

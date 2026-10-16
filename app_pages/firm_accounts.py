@@ -21,16 +21,18 @@ tz = state.tz()
 db = state.db()
 firms = state.app().firms
 ui.page_header(
-    "Firm & Account Manager",
-    "Separate, configurable rules per firm and account type. Figures are "
-    "ESTIMATES from your own records - never official balances or approvals.",
+    "Firm Accounts",
+    "Track your Topstep and Tradeify accounts against their rules. Every figure is an estimate from "
+    "your own records - never an official balance or approval.",
+    eyebrow="Prop firms",
+    accent="Accounts",
 )
-st.markdown(
-    '<div class="brc-banner"><b>No firm rule shipped with this app is VERIFIED.</b> The official help '
-    "centers could not be fetched from the build environment, so values came from web-search summaries of "
-    "the official pages (2026-10-16). Confirm each rule on the official page and mark it USER CONFIRMED. "
-    "This app does not guarantee compliance with any firm's rules.</div>",
-    unsafe_allow_html=True,
+ui.notice(
+    "target",
+    "<b>No firm rule shipped with this app is VERIFIED.</b> The official help centers could not be fetched "
+    "from the build environment, so values came from web-search summaries of the official pages (2026-10-16). "
+    "Confirm each rule on the official page and mark it USER CONFIRMED. This app does not guarantee "
+    "compliance with any firm's rules.",
 )
 
 tab_acc, tab_dash, tab_rules, tab_proc = st.tabs(

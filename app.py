@@ -25,6 +25,7 @@ st.set_page_config(
 )
 
 from data.database import storage_is_ephemeral
+from ui.components import notice
 from ui.safe_markdown import install as install_safe_markdown
 from ui.state import app, render_sidebar
 from ui.theme import inject_css
@@ -32,38 +33,33 @@ from ui.theme import inject_css
 install_safe_markdown()  # currency "$" must never render as LaTeX
 
 inject_css()
+st.logo(str(ROOT / "ui/assets/logo.svg"), size="large", icon_image=str(ROOT / "ui/assets/mark.svg"))
 app()  # migrate DB, sync instruments and firm rules
 
+# The everyday pages sit directly in the top bar; research and system pages under "More".
 PAGES = {
-    "Trading": [
-        st.Page("app_pages/overview.py", title="Overview", icon=":material/dashboard:", default=True),
-        st.Page("app_pages/live_signals.py", title="Live Market Signals", icon=":material/bolt:"),
-        st.Page("app_pages/levels.py", title="Support & Resistance", icon=":material/stacked_line_chart:"),
-        st.Page("app_pages/trade_manager.py", title="Trade Manager", icon=":material/rule:"),
+    "": [
+        st.Page("app_pages/overview.py", title="Home", icon=":material/home:", default=True),
+        st.Page("app_pages/live_signals.py", title="Signals", icon=":material/bolt:"),
+        st.Page("app_pages/levels.py", title="Levels", icon=":material/stacked_line_chart:"),
+        st.Page("app_pages/trade_manager.py", title="My Trades", icon=":material/rule:"),
+        st.Page("app_pages/firm_accounts.py", title="Accounts", icon=":material/account_balance:"),
     ],
-    "Accounts": [
-        st.Page(
-            "app_pages/firm_accounts.py", title="Firm & Account Manager", icon=":material/account_balance:"
-        ),
-    ],
-    "Research": [
-        st.Page("app_pages/backtester.py", title="Backtesting Lab", icon=":material/science:"),
-        st.Page("app_pages/analytics.py", title="Analytics", icon=":material/monitoring:"),
-        st.Page("app_pages/journal.py", title="Trade Journal", icon=":material/menu_book:"),
-    ],
-    "System": [
-        st.Page("app_pages/alerts.py", title="Alerts Center", icon=":material/notifications:"),
-        st.Page("app_pages/settings.py", title="Settings & Data Sources", icon=":material/settings:"),
+    "More": [
+        st.Page("app_pages/journal.py", title="Journal", icon=":material/menu_book:"),
+        st.Page("app_pages/backtester.py", title="Backtest", icon=":material/science:"),
+        st.Page("app_pages/analytics.py", title="Stats", icon=":material/monitoring:"),
+        st.Page("app_pages/alerts.py", title="Alerts", icon=":material/notifications:"),
+        st.Page("app_pages/settings.py", title="Settings", icon=":material/settings:"),
     ],
 }
 
-nav = st.navigation(PAGES)
+nav = st.navigation(PAGES, position="top")
 render_sidebar()
 if storage_is_ephemeral():
-    st.warning(
-        "**Temporary storage.** This copy runs on a hosted service that erases its database whenever the "
-        "app restarts, sleeps or is updated. Trades, journal entries, accounts and settings entered here "
-        "can be lost without warning. For a permanent journal, run the app on your own computer.",
-        icon=":material/cloud_off:",
+    notice(
+        "cloud_off",
+        "<b>Temporary storage</b> - this hosted copy can erase trades, journal entries, accounts and settings "
+        "whenever it restarts, sleeps or updates. For a permanent journal, run the app on your own computer.",
     )
 nav.run()

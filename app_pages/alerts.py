@@ -19,8 +19,9 @@ tz = state.tz()
 db = state.db()
 ui.page_header(
     "Alerts Center",
-    "Every alert is stored once (duplicate suppression), with its trigger time, "
-    "delivery status and your response.",
+    "Every alert is stored once, with when it fired, where it was sent and how you responded.",
+    eyebrow="Notifications",
+    accent="Alerts",
 )
 
 state.market_context()  # make sure the latest scan has been processed

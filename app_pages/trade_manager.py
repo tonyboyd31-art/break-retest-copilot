@@ -22,8 +22,10 @@ tz = state.tz()
 db = state.db()
 reg = state.app().registry
 ui.page_header(
-    "Trade Manager",
-    "Register trades you executed, get advisory management prompts, and record what you actually did.",
+    "My Trades",
+    "Log the trades you placed at your broker, get calm management prompts, and record what you actually did.",
+    eyebrow="Your positions",
+    accent="Trades",
 )
 ui.safety_banner(
     "Stops shown here are USER-REPORTED - the app cannot see your broker and never changes orders."

@@ -23,8 +23,10 @@ tz = state.tz()
 db = state.db()
 reg = state.app().registry
 ui.page_header(
-    "Settings & Data Sources",
-    "Every setting is validated before it is saved. Strategy changes are flagged against saved backtests.",
+    "Settings & Data",
+    "Every setting is checked before it is saved. Strategy changes are flagged against saved backtests.",
+    eyebrow="Preferences",
+    accent="Data",
 )
 
 HELP = {

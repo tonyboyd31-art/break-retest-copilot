@@ -39,7 +39,7 @@ def base_layout(
         template="plotly_dark",
         paper_bgcolor="rgba(0,0,0,0)",
         plot_bgcolor=t.SURFACE,
-        font=dict(family="system-ui, -apple-system, Segoe UI, sans-serif", size=12, color=t.INK_2),
+        font=dict(family="Inter, system-ui, -apple-system, Segoe UI, sans-serif", size=12, color=t.INK_2),
         margin=dict(l=10, r=10, t=40 if title else 16, b=10),
         showlegend=legend,
         # With a (left-aligned) title, the legend sits top-right so the two never collide.
@@ -52,8 +52,15 @@ def base_layout(
             font=dict(size=11),
             bgcolor="rgba(0,0,0,0)",
         ),
-        title=dict(text=title, font=dict(size=13, color=t.INK), x=0, xanchor="left") if title else None,
-        hoverlabel=dict(bgcolor="#161b22", bordercolor=t.AXIS, font=dict(color=t.INK)),
+        title=dict(
+            text=title,
+            font=dict(family="Cormorant Garamond, Georgia, serif", size=17, color=t.INK),
+            x=0,
+            xanchor="left",
+        )
+        if title
+        else None,
+        hoverlabel=dict(bgcolor=t.SURFACE_2, bordercolor=t.AXIS, font=dict(color=t.INK)),
     )
     fig.update_xaxes(
         gridcolor=t.GRID, gridwidth=1, linecolor=t.AXIS, zeroline=False, tickfont=dict(color=t.MUTED)

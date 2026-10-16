@@ -14,7 +14,9 @@ s = state.settings()
 tz = state.tz()
 ui.page_header(
     "Support & Resistance",
-    "Zones built causally from confirmed swings - only reactions known at the replay clock are counted.",
+    "Price zones where the market has turned before - built only from swings that were confirmed at the time.",
+    eyebrow="Price map",
+    accent="Resistance",
 )
 
 ctx = state.market_context()
@@ -190,5 +192,5 @@ with tab_cfg:
 - **Relevance:** >= {s.zones.min_reactions} reactions, last reaction within {s.zones.max_age_bars} bars, within
   {s.zones.relevance_max_distance_atr} ATR of price. Obstacles for targets need >= {s.zones.opposing_min_reactions} reactions.
 
-All parameters are editable under **Settings & Data Sources -> Strategy**.
+All parameters are editable under **Settings -> Strategy**.
 """)

@@ -1,13 +1,13 @@
-"""Overview: data status, signals, open trades, accounts and recent alerts at a glance."""
+"""Home: market status, ready setups, open trades, accounts and recent alerts at a glance."""
 
 from __future__ import annotations
 
 from collections import Counter
+from html import escape
 
-import pandas as pd
 import streamlit as st
 
-from core.retest_engine import STATE_LABELS, SetupState
+from core.retest_engine import SetupState
 from core.timeutils import to_display
 from data import repositories as repo
 from services.account_service import build_dashboard
@@ -15,163 +15,211 @@ from services.scan_service import latest_qualified
 from services.trade_service import monitor_open_trades
 from ui import components as ui
 from ui import state
+from ui import theme as t
 
 s = state.settings()
 tz = state.tz()
-ui.page_header("Overview", "What the copilot sees right now - signals, open trades, account risk and alerts.")
-ui.safety_banner()
+db = state.db()
 
 ctx = state.market_context()
 md, scan = ctx.md, ctx.scan
+unack = repo.count_unacknowledged(db)
+n_alerts = sum(unack.values())
+
+status_chips = []
+if md.ok:
+    feed_lbl = t.FEED_BADGE.get(md.feed_type, (md.feed_type.upper(), t.MUTED))[0]
+    status_chips = [
+        ("pulse", f"<b>{escape(md.spec.symbol)}</b>&nbsp;{escape(md.contract or '')}"),
+        ("chart", escape(feed_lbl.title()) + " data"),
+        ("clock", "Last bar " + escape(to_display(md.as_of, tz, "%a %H:%M %Z"))),
+        ("bell", f"{n_alerts} new alert{'s' if n_alerts != 1 else ''}"),
+    ]
+ui.hero(
+    "Trade With Discipline.",
+    "Break-and-retest setups, your open trades and your prop-firm limits in one calm view. "
+    "Analysis only - every decision is yours.",
+    eyebrow="Your trading desk",
+    accent="Discipline.",
+    chips=ui.chips(status_chips),
+)
+
+_, b1, b2, _ = st.columns([1.2, 1, 1, 1.2])
+if b1.button("See signals", type="primary", icon=":material/bolt:", width="stretch"):
+    st.switch_page("app_pages/live_signals.py")
+if b2.button("Log a trade", icon=":material/add:", width="stretch"):
+    st.switch_page("app_pages/trade_manager.py")
+
 if not md.ok:
     st.error(md.error or "No market data available.")
     st.stop()
-ui.data_status(md, tz, compact=True)
+ui.data_alerts(md)
 spec = md.spec
 
-c1, c2, c3, c4 = st.columns(4)
 counts = Counter(x.state for x in scan.setups) if scan else Counter()
-active = sum(
+watching = sum(
     v
     for k, v in counts.items()
     if k not in (SetupState.QUALIFIED, SetupState.REJECTED, SetupState.EXPIRED, SetupState.INVALIDATED)
 )
-c1.metric("Pending setups", active, help="Breakouts awaiting retest or confirmation at the current clock.")
-c2.metric(
-    "Qualified (this contract)",
+open_trades = repo.list_trades(db, status="open")
+
+st.write("")
+m1, m2, m3, m4 = st.columns(4)
+m1.metric(
+    "Ready setups",
     counts.get(SetupState.QUALIFIED, 0),
-    help=f"Met every rule and scored at least {s.scoring.min_score:g}/100.",
+    help=f"Setups that met every rule and scored at least {s.scoring.min_score:g}/100 in the current window.",
 )
-c3.metric(
-    "Rejected / expired / invalidated",
-    counts.get(SetupState.REJECTED, 0)
-    + counts.get(SetupState.EXPIRED, 0)
-    + counts.get(SetupState.INVALIDATED, 0),
-)
-unack = repo.count_unacknowledged(state.db())
-c4.metric(
-    "Unacknowledged alerts",
-    sum(unack.values()),
-    help=", ".join(f"{k}: {v}" for k, v in unack.items()) or "None",
+m2.metric("Watching", watching, help="Breakouts waiting for a retest or confirmation right now.")
+m3.metric("Open trades", len(open_trades), help="Trades you logged that are not closed yet.")
+m4.metric(
+    "New alerts",
+    n_alerts,
+    help=", ".join(f"{k}: {v}" for k, v in unack.items()) or "Nothing waiting for you.",
 )
 
-left, right = st.columns([3, 2])
+st.write("")
+left, right = st.columns([3, 2], gap="large")
+
 with left:
-    st.markdown("### Latest qualified setups")
-    q = latest_qualified(scan, 6) if scan else []
+    st.markdown("### Ready setups")
+    q = latest_qualified(scan, 3) if scan else []
     if not q:
-        st.info(
-            "No qualified setups in the analysed window. The engine is selective by design - see Live Market "
-            "Signals for pending and rejected setups and why."
+        st.markdown(
+            '<div class="brc-empty">No setups are ready right now. The engine is selective on purpose - '
+            "open Signals to see what it is watching and why others were rejected.</div>",
+            unsafe_allow_html=True,
         )
-    else:
-        rows = []
-        for x in q:
-            rows.append(
-                {
-                    "confirmed": to_display(x.confirm_ts, tz, "%m-%d %H:%M"),
-                    "dir": x.direction,
-                    "score": round(x.score.total, 1),
-                    "entry": x.plan.entry_price,
-                    "stop": x.plan.stop,
-                    "T1": x.plan.target1,
-                    "R:R": x.plan.rr,
-                    "zone": f"{spec.fmt(x.zone['lower'])}-{spec.fmt(x.zone['upper'])}",
-                }
+    for x in q:
+        p = x.plan
+        side = t.badge(x.direction.upper(), t.AQUA if x.direction == "long" else t.RED)
+        levels = [
+            ("Entry", spec.fmt(p.entry_price)),
+            ("Stop", spec.fmt(p.stop)),
+            ("Target 1", spec.fmt(p.target1)),
+            ("Reward : risk", f"{p.rr:.1f}"),
+        ]
+        st.markdown(
+            f'<div class="brc-card"><div class="brc-row"><div>{side}'
+            f'<div class="brc-card-title">{escape(spec.symbol)} at '
+            f"{escape(spec.fmt(x.zone['lower']))} - {escape(spec.fmt(x.zone['upper']))}</div>"
+            f'<div class="brc-card-meta">Confirmed {escape(to_display(x.confirm_ts, tz, "%a %b %d, %H:%M"))}'
+            f" &middot; {escape(x.contract or '')}</div></div>"
+            f'<div class="brc-score">{x.score.total:.0f}<small> /100</small></div></div>'
+            '<div class="brc-levels">'
+            + "".join(
+                f'<div><div class="k">{k}</div><div class="v">{escape(v)}</div></div>' for k, v in levels
             )
-        st.dataframe(pd.DataFrame(rows), hide_index=True, width="stretch")
-        st.caption("Score = rule-match ranking, not a probability. Proposed levels are advisory.")
-    st.page_link("app_pages/live_signals.py", label="Open Live Market Signals", icon=":material/bolt:")
-
-    st.markdown("### Open manual trades")
-    open_trades = repo.list_trades(state.db(), status="open")
-    if not open_trades:
+            + "</div></div>",
+            unsafe_allow_html=True,
+        )
+    if q:
         st.caption(
-            "No open trades registered. Register a trade you placed at your broker in the Trade Manager."
+            "The score ranks how well a setup matches the rules - it is not a probability. Levels are suggestions."
+        )
+    st.page_link("app_pages/live_signals.py", label="See all signals", icon=":material/arrow_forward:")
+
+    st.markdown("### Open trades")
+    if not open_trades:
+        st.markdown(
+            '<div class="brc-empty">No open trades. When you place a trade at your broker, log it under '
+            "My Trades to get breakeven, trailing and invalidation prompts.</div>",
+            unsafe_allow_html=True,
         )
     else:
-        mons = monitor_open_trades(state.db(), s, md, scan, None)
-        rows = []
+        mons = monitor_open_trades(db, s, md, scan, None)
         for tr in open_trades:
+            tspec = state.app().registry.get(tr["instrument"])
             m = mons.get(tr["id"])
-            be = next((b for b in (m.be_status if m else []) if b["reached"]), None)
-            rows.append(
-                {
-                    "#": tr["id"],
-                    "instrument": tr["instrument"],
-                    "dir": tr["direction"],
-                    "qty": tr["quantity"],
-                    "entry": tr["entry_price"],
-                    "current R": round(m.current_r, 2) if m and m.current_r is not None else None,
-                    "stop (user-reported)": m.registered_stop if m else tr["initial_stop"],
-                    "BE review": ("reached " + to_display(be["trigger_ts"], tz, "%H:%M")) if be else "-",
-                    "status": (
-                        "monitoring"
-                        if m and m.data_ok
-                        else (m.data_message[:60] if m else f"Load {tr['instrument']} data to monitor")
-                    ),
-                }
+            r_now = f"{m.current_r:+.2f}R" if m and m.current_r is not None else "-"
+            stop = tspec.fmt(m.registered_stop if m else tr["initial_stop"])
+            status = (
+                "Monitoring"
+                if m and m.data_ok
+                else (m.data_message if m else f"Load {tr['instrument']} data to monitor this trade")
             )
-        st.dataframe(pd.DataFrame(rows), hide_index=True, width="stretch")
-    st.page_link("app_pages/trade_manager.py", label="Open Trade Manager", icon=":material/rule:")
+            side = t.badge(tr["direction"].upper(), t.AQUA if tr["direction"] == "long" else t.RED)
+            st.markdown(
+                f'<div class="brc-card"><div class="brc-row"><div>{side}'
+                f'<div class="brc-card-title">#{tr["id"]} {escape(tr["instrument"])} &times; {tr["quantity"]} '
+                f"at {escape(tspec.fmt(tr['entry_price']))}</div>"
+                f'<div class="brc-card-meta">Your stop {escape(stop)} (as you reported it) &middot; '
+                f"{escape(status)}</div></div>"
+                f'<div class="brc-score" style="color:var(--brc-ink)">{escape(r_now)}<small> now</small></div>'
+                "</div></div>",
+                unsafe_allow_html=True,
+            )
+    st.page_link("app_pages/trade_manager.py", label="Manage my trades", icon=":material/arrow_forward:")
 
 with right:
     st.markdown("### Accounts")
-    accts = repo.list_accounts(state.db(), include_closed=False)
+    accts = repo.list_accounts(db, include_closed=False)
     if not accts:
-        st.caption("No accounts yet - add your Tradeify / Topstep accounts in the Firm & Account Manager.")
+        st.markdown(
+            '<div class="brc-empty">No accounts yet. Add your Topstep or Tradeify accounts to track targets '
+            "and drawdown room.</div>",
+            unsafe_allow_html=True,
+        )
     for a in accts:
         try:
-            d = build_dashboard(state.db(), a, s)
+            d = build_dashboard(db, a, s)
         except Exception as exc:  # noqa: BLE001
             st.warning(f"{a['nickname']}: {exc}")
             continue
-        p = d.progress
-        dd = p.drawdown
-        items = [
-            ("Firm / type", f"{d.firm.name} - {a['account_type_code']}"),
-            ("Stage", a["stage"]),
-            ("Est. balance", ui.money(p.current_balance)),
-            ("Net profit (cycle)", ui.money(p.net_profit, signed=True)),
-        ]
-        if p.profit_target:
-            items.append(
-                (
-                    "Target progress",
-                    f"{max(p.net_profit, 0) / p.profit_target:.0%} of {ui.money(p.profit_target)}",
-                )
+        pr = d.progress
+        dd = pr.drawdown
+        try:
+            type_label = d.firm.account_type(a["account_type_code"]).label
+        except KeyError:
+            type_label = a["account_type_code"]
+        body = (
+            f'<div class="brc-card-title">{escape(a["nickname"])}</div>'
+            f'<div class="brc-card-meta">{escape(d.firm.name)} &middot; {escape(type_label)} &middot; '
+            f"{escape(a['stage'])}</div>"
+            '<div class="brc-kv" style="margin-top:10px">'
+            f'<div class="k">Balance (est.)</div><div class="v">{escape(ui.money(pr.current_balance))}</div>'
+            f'<div class="k">Profit this cycle</div><div class="v">{escape(ui.money(pr.net_profit, signed=True))}</div>'
+            f'<div class="k">Drawdown room</div><div class="v">'
+            + (
+                escape(ui.money(dd.remaining_allowance)) + " (estimate)"
+                if dd
+                else escape(pr.drawdown_message)
             )
-        items.append(
-            (
-                "Drawdown allowance",
-                ui.money(dd.remaining_allowance) + " (estimate)" if dd else p.drawdown_message,
-            )
+            + "</div></div>"
         )
-        items.append(("Status", p.status))
-        ui.kv_card(a["nickname"], items)
-        if d.warnings:
-            st.caption(
-                f"{len(d.warnings)} warning(s) - unconfirmed rules or estimates. See Firm & Account Manager."
+        if pr.profit_target:
+            frac = max(pr.net_profit, 0) / pr.profit_target
+            body += (
+                f'<div class="brc-bar"><span style="width:{min(frac, 1) * 100:.0f}%"></span></div>'
+                f'<div class="brc-muted">{frac:.0%} of the {escape(ui.money(pr.profit_target))} target'
+                f" &middot; {escape(pr.status)}</div>"
             )
-    st.page_link(
-        "app_pages/firm_accounts.py", label="Open Firm & Account Manager", icon=":material/account_balance:"
-    )
+        if d.warnings:
+            body += (
+                f'<div class="brc-muted" style="margin-top:6px">{len(d.warnings)} item(s) to check - '
+                "unconfirmed rules or estimates.</div>"
+            )
+        st.markdown(f'<div class="brc-card">{body}</div>', unsafe_allow_html=True)
+    st.page_link("app_pages/firm_accounts.py", label="Open accounts", icon=":material/arrow_forward:")
 
     st.markdown("### Recent alerts")
-    alerts = repo.list_alerts(state.db(), limit=6)
+    alerts = repo.list_alerts(db, limit=5)
     if not alerts:
-        st.caption("No alerts yet.")
-    for a in alerts:
-        mark = "" if a["acknowledged"] else "  -  **new**"
-        st.markdown(
-            f"**{a['title']}**{mark}  \n<span class='brc-muted'>{to_display(a['trigger_ts'], tz)} - "
-            f"{a['severity']}</span>",
-            unsafe_allow_html=True,
-        )
-    st.page_link("app_pages/alerts.py", label="Open Alerts Center", icon=":material/notifications:")
+        st.markdown('<div class="brc-empty">No alerts yet.</div>', unsafe_allow_html=True)
+    else:
+        rows = []
+        for a in alerts:
+            dot = t.SEVERITY_COLOR.get(a["severity"], t.MUTED)
+            new = ' <span class="brc-pill">new</span>' if not a["acknowledged"] else ""
+            rows.append(
+                f'<div style="padding:8px 0;border-bottom:1px solid var(--brc-border)">'
+                f'<span style="color:{dot}">&#9679;</span> <b>{escape(a["title"])}</b>{new}'
+                f'<div class="brc-muted">{escape(to_display(a["trigger_ts"], tz, "%a %b %d, %H:%M"))} &middot; '
+                f"{escape(a['severity'])}</div></div>"
+            )
+        st.markdown(f'<div class="brc-card">{"".join(rows)}</div>', unsafe_allow_html=True)
+    st.page_link("app_pages/alerts.py", label="All alerts", icon=":material/arrow_forward:")
 
-if scan is not None:
-    with st.expander("Setup state counts (current contract window)"):
-        st.dataframe(
-            pd.DataFrame([{"state": STATE_LABELS[k], "count": v} for k, v in counts.items()]), hide_index=True
-        )
+st.write("")
+ui.safety_banner()
