@@ -19,8 +19,16 @@ ELEMENTS = ("markdown", "caption", "info", "warning", "error", "success", "toast
 _installed = False
 
 
-def escape_dollars(body: object) -> object:
-    return _UNESCAPED_DOLLAR.sub(r"\\$", body) if isinstance(body, str) else body
+def escape_dollars(body: object, html: bool = False) -> object:
+    """Escape ``$`` for markdown; ``html=True`` for bodies rendered with ``unsafe_allow_html``.
+
+    Backslash escapes are not processed inside raw HTML blocks, where ``\\$`` would
+    show the backslash. A character reference renders as ``$`` in both contexts and
+    is never parsed as math.
+    """
+    if not isinstance(body, str):
+        return body
+    return _UNESCAPED_DOLLAR.sub("&#36;" if html else r"\\$", body)
 
 
 def install() -> None:
@@ -32,14 +40,16 @@ def install() -> None:
 
         @functools.wraps(cls_orig)
         def method(self, body, *args, __orig=cls_orig, **kwargs):
-            return __orig(self, escape_dollars(body), *args, **kwargs)
+            html = bool(kwargs.get("unsafe_allow_html"))
+            return __orig(self, escape_dollars(body, html), *args, **kwargs)
 
         setattr(DeltaGenerator, name, method)
         mod_orig = getattr(st, name)
 
         @functools.wraps(mod_orig)
         def function(body, *args, __orig=mod_orig, **kwargs):
-            return __orig(escape_dollars(body), *args, **kwargs)
+            html = bool(kwargs.get("unsafe_allow_html"))
+            return __orig(escape_dollars(body, html), *args, **kwargs)
 
         setattr(st, name, function)
     _installed = True

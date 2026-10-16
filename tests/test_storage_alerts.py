@@ -292,3 +292,14 @@ def test_explainer_number_guard():
         unsupported_numbers("Entry near 17,024 with a stop at 17,043.50 and target 16,985.", facts) == set()
     )
     assert unsupported_numbers("Expect a move to 16,900.25 soon.", facts) == {"16900.25"}
+
+
+def test_dollar_escaping_for_markdown_and_html():
+    from ui.safe_markdown import escape_dollars
+
+    assert escape_dollars("need $2,250 of the $3,000 target") == r"need \$2,250 of the \$3,000 target"
+    assert escape_dollars(r"already \$5") == r"already \$5"
+    assert (
+        escape_dollars('<div class="v">$49,970.00</div>', html=True) == '<div class="v">&#36;49,970.00</div>'
+    )
+    assert escape_dollars(None) is None
